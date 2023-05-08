@@ -76,6 +76,7 @@ public:
     }
 
     Type& operator[](size_t index) noexcept {
+        assert(index < size_);
         return items_[index];
     }
 
@@ -149,9 +150,7 @@ public:
     }
 
     Iterator Insert(ConstIterator pos, const Type& value) {
-        if (pos > end() || pos < begin()) {
-            throw std::out_of_range("Invalid position");
-        }
+        assert(pos <= end() && pos >= begin());
         auto index = pos - begin();
         if (size_ == capacity_) {
             size_t new_capacity = capacity_ == 0 ? 1 : capacity_*2;
@@ -171,9 +170,7 @@ public:
     }
 
     Iterator Insert(ConstIterator pos, Type&& value) {
-        if (pos > end() || pos < begin()) {
-            throw std::out_of_range("Invalid position");
-        }
+        assert(pos <= end() && pos >= begin());
         auto index = pos - begin();
         if (size_ == capacity_) {
             size_t new_capacity = capacity_ == 0 ? 1 : capacity_*2;
@@ -193,12 +190,13 @@ public:
     }
 
     void PopBack() noexcept {
-        if(!IsEmpty()) {
-            --size_;
-        }
+        assert(!IsEmpty());
+        --size_;
     }
 
     Iterator Erase(ConstIterator pos) {
+        assert(!IsEmpty());
+        assert(pos < end() && pos >= begin());
         auto index = pos - begin();
         std::move(begin() + index + 1, end(), begin() + index);
         --size_;
@@ -251,7 +249,11 @@ private:
 
 template <typename Type>
 inline bool operator==(const SimpleVector<Type>& lhs, const SimpleVector<Type>& rhs) {
-    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+    if (lhs.GetSize() == rhs.GetSize()) {
+        return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+    } else {
+        return false;
+    }
 }
 
 template <typename Type>
