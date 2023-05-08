@@ -15,9 +15,9 @@ public:
         }
     }
 
-    explicit ArrayPtr(Type* raw_ptr) noexcept {
-        raw_ptr_ = raw_ptr;
-    }
+    ArrayPtr(Type*) = delete;
+
+    ArrayPtr(const ArrayPtr&) = delete;
 
     ArrayPtr& operator=(const ArrayPtr& rhs) = delete;
 
