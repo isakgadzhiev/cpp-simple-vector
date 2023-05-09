@@ -15,19 +15,24 @@ public:
         }
     }
 
-    ArrayPtr(Type*) = delete;
+    explicit ArrayPtr(Type* raw_ptr) noexcept {
+        raw_ptr_ = raw_ptr;
+    }
 
     ArrayPtr(const ArrayPtr&) = delete;
 
     ArrayPtr& operator=(const ArrayPtr& rhs) = delete;
 
+    ArrayPtr(ArrayPtr&& other) noexcept
+        : raw_ptr_(other.raw_ptr_) {
+        other.raw_ptr_ = nullptr;
+    }
+
     ArrayPtr& operator=(ArrayPtr&& rhs) {
         if (this == &rhs) {
             return *this;
         }
-        delete raw_ptr_;
-        raw_ptr_ = std::move(rhs.raw_ptr_);
-        rhs.raw_ptr_ = nullptr;
+        swap(rhs);
         return *this;
     }
 
