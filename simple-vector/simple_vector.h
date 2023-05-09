@@ -81,6 +81,7 @@ public:
     }
 
     const Type& operator[](size_t index) const noexcept {
+        assert(index < size_);
         return items_[index];
     }
 
